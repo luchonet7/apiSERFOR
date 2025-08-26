@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   description: "Sistema de Análisis de Superposición de Imágenes Georreferenciadas",
 };
 
-export default function RootLayout({
+export default function RootLayout ({
   children,
 }: {
   children: React.ReactNode;

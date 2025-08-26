@@ -28,7 +28,7 @@ const loginFormSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginFormSchema>;
 
-function LoginPageContent() {
+function LoginPageContent () {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -48,7 +48,7 @@ function LoginPageContent() {
     }
   }, [searchParams]);
 
-  async function onSubmit(values: LoginFormValues) {
+  async function onSubmit (values: LoginFormValues) {
     try {
       // Simulación de proceso de login con delay
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -60,7 +60,7 @@ function LoginPageContent() {
         name: values.email.includes("admin") ? "Admin SERFOR" : "Mia V",
         numeroDocumento: "12345678",
         apellidoPaterno: "Vargas",
-        apellidoMaterno: "Silva", 
+        apellidoMaterno: "Silva",
         nombres: values.email.includes("admin") ? "Administrador" : "Maria Isabel",
         celular: "+51 987654321",
         estado: true,
@@ -96,7 +96,7 @@ function LoginPageContent() {
           size="sm"
           icon={<Lock className="w-6 h-6" />}
         />
-        
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -105,7 +105,7 @@ function LoginPageContent() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <CustomInputControlled 
+                    <CustomInputControlled
                       type="email"
                       maxLength={100}
                       label="Correo electrónico"
@@ -113,7 +113,7 @@ function LoginPageContent() {
                       allowedCharacters={["letters", "numeric", "symbols"]}
                       helperText="Ejemplo: usuario@ejemplo.com"
                       textTransform="lowercase"
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -127,14 +127,14 @@ function LoginPageContent() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <CustomInputControlled 
+                    <CustomInputControlled
                       type="password"
                       maxLength={100}
                       label="Contraseña"
                       icon={<Lock className="w-4 h-4" />}
                       allowedCharacters={["letters", "numeric", "symbols"]}
                       helperText="Ingresa tu contraseña"
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -160,15 +160,7 @@ function LoginPageContent() {
               Iniciar Sesión
             </LoadingButton>
 
-            <div className="text-center text-sm">
-              ¿No tienes una cuenta?{" "}
-              <Link
-                href="/auth/register"
-                className="text-blue-600 hover:underline"
-              >
-                Registrarse
-              </Link>
-            </div>
+
           </form>
         </Form>
       </div>
@@ -176,7 +168,7 @@ function LoginPageContent() {
   );
 }
 
-export default function LoginPage() {
+export default function LoginPage () {
   return (
     <Suspense fallback={
       <div className="flex items-center justify-center">
