@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react"
 import { toast } from "sonner"
-import { getCurrentUser } from "../actions/auth.actions"
+import { getCurrentUser } from "../api/auth.actions"
 import { AccountInfo } from "./account-info"
 import { UsuarioDto } from "@/models/usuario"
 
-export function ProfileContainer() {
+export function ProfileContainer () {
   const [userData, setUserData] = useState<UsuarioDto | null>(null)
   const [loading, setLoading] = useState(false)
 

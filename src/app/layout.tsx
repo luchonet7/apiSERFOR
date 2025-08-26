@@ -5,6 +5,7 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/components/providers/session-provider";
+import ReactQueryProvider from "@/lib/react-query";
 
 import { NProgress } from "@/components/custom/nprogress";
 
@@ -23,18 +24,20 @@ export default function RootLayout ({
   return (
     <html lang="es" suppressHydrationWarning>
       <body className={inter.className}>
-        <AuthProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <NProgress color="blue" height="md" />
-            {children}
-            <Toaster richColors />
-          </ThemeProvider>
-        </AuthProvider>
+        <ReactQueryProvider>
+          <AuthProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <NProgress color="blue" height="md" />
+              {children}
+              <Toaster richColors />
+            </ThemeProvider>
+          </AuthProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );
