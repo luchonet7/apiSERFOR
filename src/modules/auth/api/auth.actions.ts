@@ -69,7 +69,7 @@ export async function loginUser (credentials: LoginCredentials): Promise<any> {
   }
 
   // Obtener la URL de autenticación desde las variables de entorno
-  const authUrl = process.env.SEC_URL_AUTHENTICATOR || '/login'
+  const authUrl = process.env.SEC_URL_AUTHENTICATOR + '/login'
 
   return apiFetch<LoginResponse>(authUrl, {
     method: 'POST',
