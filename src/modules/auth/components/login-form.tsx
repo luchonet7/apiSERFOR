@@ -73,12 +73,17 @@ export function LoginForm () {
 
     const onSubmit = async (data: LoginFormValues) => {
         try {
-            await executeLogin({
+            const resultado = await executeLogin({
                 nombre: data.usuario, // Usando usuario como nombre de usuario
                 password: data.password,
                 sistema: { id: 1 }, // Valores por defecto - ajustar según necesidades
                 compagnia: { id: 1 }, // Valores por defecto - ajustar según necesidades
             });
+
+            // Si el login fue exitoso, redirigir a dashboard
+            if (resultado && resultado.success) {
+                router.push("/dashboard");
+            }
         } catch (error) {
             // El error ya se maneja en el useEffect
             console.error("Error al ejecutar login:", error);
