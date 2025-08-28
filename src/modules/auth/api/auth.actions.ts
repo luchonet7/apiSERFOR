@@ -80,7 +80,7 @@ export async function loginUser (credentials: LoginCredentials): Promise<any> {
   return apiFetch<LoginResponse>(authUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(credentials),
+    body: JSON.stringify(credentialsWithMD5),
   })
 }
 
