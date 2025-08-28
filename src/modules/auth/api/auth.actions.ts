@@ -65,16 +65,22 @@ export async function loginUser (credentials: LoginCredentials): Promise<any> {
   // Convertir password a MD5 antes de enviar
   const credentialsWithMD5 = {
     ...credentials,
+    "sistema": {
+      "id": process.env.NEXT_PUBLIC_SEC_SYSTEM_ID
+    },
+    "compagnia": {
+      "id": process.env.NEXT_PUBLIC_SEC_COMPANY_ID
+    },
     password: toMD5(credentials.password)
   }
 
   // Obtener la URL de autenticación desde las variables de entorno
-  const authUrl = process.env.SEC_URL_AUTHENTICATOR + '/login'
+  const authUrl = process.env.NEXT_PUBLIC_SEC_URL_AUTHENTICATOR + '/login'
 
   return apiFetch<LoginResponse>(authUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(credentialsWithMD5),
+    body: JSON.stringify(credentials),
   })
 }
 
@@ -106,7 +112,7 @@ export async function getCurrentUser (): Promise<Usuario | null> {
  * @returns Token de seguridad
  */
 async function obtenerTokenSeguridad (credentials: LoginCredentials) {
-  const response = await fetch(process.env.SEC_URL_AUTHENTICATOR + '/apptoken', {
+  const response = await fetch(process.env.NEXT_PUBLIC_SEC_URL_AUTHENTICATOR + '/apptoken', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
