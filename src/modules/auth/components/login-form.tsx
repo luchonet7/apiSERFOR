@@ -54,7 +54,7 @@ export function LoginForm () {
     // Efecto para manejar la respuesta del login
     useEffect(() => {
         if (loginData) {
-            if (loginData.success) {
+            if (loginData.usuario) {
                 toast.success("Inicio de sesión exitoso");
                 router.push("/dashboard");
             } else {
@@ -80,10 +80,7 @@ export function LoginForm () {
                 compagnia: { id: 1 }, // Valores por defecto - ajustar según necesidades
             });
 
-            // Si el login fue exitoso, redirigir a dashboard
-            if (resultado && resultado.success) {
-                router.push("/dashboard");
-            }
+
         } catch (error) {
             // El error ya se maneja en el useEffect
             console.error("Error al ejecutar login:", error);
