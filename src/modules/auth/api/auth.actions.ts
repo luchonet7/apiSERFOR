@@ -64,14 +64,14 @@ export interface Usuario {
 export async function loginUser (credentials: LoginCredentials): Promise<any> {
   // Convertir password a MD5 antes de enviar
   const credentialsWithMD5 = {
-    ...credentials,
-    "sistema": {
-      "id": process.env.NEXT_PUBLIC_SEC_SYSTEM_ID
+    nombre: credentials.nombre,
+    password: toMD5(credentials.password),
+    sistema: {
+      id: process.env.NEXT_PUBLIC_SEC_SYSTEM_ID
     },
-    "compagnia": {
-      "id": process.env.NEXT_PUBLIC_SEC_COMPANY_ID
-    },
-    password: toMD5(credentials.password)
+    compagnia: {
+      id: process.env.NEXT_PUBLIC_SEC_COMPANY_ID
+    }
   }
 
   // Obtener la URL de autenticación desde las variables de entorno
