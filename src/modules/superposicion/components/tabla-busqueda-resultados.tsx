@@ -15,9 +15,10 @@ import { SuperposicionData, SuperposicionFormData } from "../types/superposicion
 interface TablaBusquedaResultadosProps {
   data: SuperposicionData[];
   onDataChange: (data: SuperposicionData[]) => void;
+  onNavegarASuperposicion?: () => void;
 }
 
-export function TablaBusquedaResultados ({ data, onDataChange }: TablaBusquedaResultadosProps) {
+export function TablaBusquedaResultados ({ data, onDataChange, onNavegarASuperposicion }: TablaBusquedaResultadosProps) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editData, setEditData] = useState<SuperposicionData | null>(null);
@@ -77,11 +78,16 @@ export function TablaBusquedaResultados ({ data, onDataChange }: TablaBusquedaRe
     setIsFormOpen(true);
   };
 
-  // Función para abrir formulario de agregar
+  // Función para abrir formulario de agregar (ahora navega a superposición)
   const openAddForm = () => {
-    setEditData(null);
-    setIsEditMode(false);
-    setIsFormOpen(true);
+    if (onNavegarASuperposicion) {
+      onNavegarASuperposicion();
+    } else {
+      // Fallback: abrir modal si no hay función de navegación
+      setEditData(null);
+      setIsEditMode(false);
+      setIsFormOpen(true);
+    }
   };
 
   // Función para abrir diálogo de eliminación
@@ -101,14 +107,14 @@ export function TablaBusquedaResultados ({ data, onDataChange }: TablaBusquedaRe
       {
         accessorKey: "nroExp",
         header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Nro Exp." />
+          <DataTableColumnHeader column={column} title="Nro. Expediente" />
         ),
         cell: ({ row }) => (
-          <div className="font-medium text-center">
+          <div className="font-medium text-center text-xs">
             {row.getValue("nroExp")}
           </div>
         ),
-        size: 150,
+        size: 140,
       },
       {
         accessorKey: "asunto",
@@ -116,7 +122,7 @@ export function TablaBusquedaResultados ({ data, onDataChange }: TablaBusquedaRe
           <DataTableColumnHeader column={column} title="Asunto" />
         ),
         cell: ({ row }) => (
-          <div className="text-sm text-left max-w-[400px] min-w-[300px] whitespace-normal leading-relaxed py-2">
+          <div className="text-xs text-left max-w-[350px] min-w-[250px] whitespace-normal leading-tight py-1">
             {row.getValue("asunto")}
           </div>
         ),
@@ -125,15 +131,15 @@ export function TablaBusquedaResultados ({ data, onDataChange }: TablaBusquedaRe
       {
         accessorKey: "tipoSolicitud",
         header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Tipo Solicitud" />
+          <DataTableColumnHeader column={column} title="Tipo de Solicitud" />
         ),
         cell: ({ row }) => (
-          <div className="text-sm text-center max-w-[200px] min-w-[150px] whitespace-normal leading-relaxed py-2">
+          <div className="text-xs text-center max-w-[180px] min-w-[140px] whitespace-normal leading-tight py-1">
             {row.getValue("tipoSolicitud")}
           </div>
         ),
         enableSorting: false,
-        size: 200,
+        size: 180,
       },
       {
         accessorKey: "profesional",
@@ -141,78 +147,82 @@ export function TablaBusquedaResultados ({ data, onDataChange }: TablaBusquedaRe
           <DataTableColumnHeader column={column} title="Profesional" />
         ),
         cell: ({ row }) => (
-          <div className="text-center font-medium">
+          <div className="text-center font-medium text-xs">
             {row.getValue("profesional")}
           </div>
         ),
-        size: 150,
+        size: 140,
       },
       {
         id: "acciones",
-        header: () => <div className="text-center font-semibold">Acciones</div>,
+        header: () => <div className="text-center font-semibold text-xs">Acciones</div>,
         cell: ({ row }) => (
           <div className="flex items-center justify-center gap-1">
             <IconButton
               variant="ghost"
               color="green"
               size="sm"
-              className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-950"
+              className="h-7 w-7 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-950"
               tooltip="Ver superposición"
               onClick={() => openDetail(row.original)}
             >
-              <Search className="h-4 w-4" />
+              <Search className="h-3 w-3" />
             </IconButton>
             <IconButton
               variant="ghost"
               size="sm"
               color="blue"
-              className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950"
+              className="h-7 w-7 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950"
               tooltip="Editar"
               onClick={() => openEditForm(row.original)}
             >
-              <Edit className="h-4 w-4" />
+              <Edit className="h-3 w-3" />
             </IconButton>
             <IconButton
               variant="ghost"
               size="sm"
               color="red"
-              className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+              className="h-7 w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
               tooltip="Eliminar"
               onClick={() => openDeleteDialog(row.original)}
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="h-3 w-3" />
             </IconButton>
           </div>
         ),
         enableSorting: false,
         enableHiding: false,
-        size: 120,
+        size: 100,
       },
     ],
     []
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Botón Agregar */}
       <div className="flex justify-end">
         <Button
           onClick={openAddForm}
-          className="bg-green-600 hover:bg-green-700 text-white"
+          size="sm"
+          className="bg-green-600 hover:bg-green-700 text-white shadow-sm text-xs h-8 px-3"
+          title="Crear nueva superposición"
         >
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="h-3 w-3 mr-1" />
           Agregar Superposición
         </Button>
       </div>
 
       {/* Tabla */}
-      <DataTable
-        columns={columns}
-        data={data}
-        pagination={true}
-        pageSize={5}
-        pageSizeOptions={[5, 10, 20]}
-      />
+      <div className="border border-gray-200 rounded-lg overflow-hidden">
+        <DataTable
+          columns={columns}
+          data={data}
+          pagination={true}
+          pageSize={8}
+          pageSizeOptions={[8, 15, 25]}
+        />
+      </div>
 
       {/* Formulario Modal */}
       <FormularioSuperposicion

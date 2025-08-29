@@ -1,13 +1,136 @@
 "use client";
 
+import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { Search, FileText } from "lucide-react";
 import { FiltrosBusqueda } from "./filtros-busqueda";
 import { TablaBusquedaResultados } from "./tabla-busqueda-resultados";
+import { SuperposicionData, FiltrosBusqueda as FiltrosBusquedaType } from "../types/superposicion.types";
 
-export function BusquedaSuperposicionContainer() {
+// Datos mock iniciales
+const mockDataBase: SuperposicionData = {
+  id: "1",
+  nroExp: "2025-0016083",
+  asunto: "Atención a consulta formulada sobre 748 petitorios mineros, en el marco de lo regulado en el artículo N° 62 de la Ley N° 29763, Ley Forestal y de Fauna Silvestre.",
+  tipoSolicitud: "Análisis de superposición de petitorios mineros",
+  profesional: "Lenin Ventura"
+};
+
+const initialData: SuperposicionData[] = Array.from({ length: 13 }, (_, index) => ({
+  ...mockDataBase,
+  id: `${index + 1}`,
+  nroExp: `2025-00160${83 + index}`,
+}));
+
+export function BusquedaSuperposicionContainer () {
+  const router = useRouter();
+  const [allData, setAllData] = useState<SuperposicionData[]>(initialData);
+  const [filteredData, setFilteredData] = useState<SuperposicionData[]>(initialData);
+  const [activeFilters, setActiveFilters] = useState<FiltrosBusquedaType>({
+    filtro: "",
+    nombre: "",
+  });
+
+  // Función para navegar a la página de superposición
+  const handleNavegarASuperposicion = () => {
+    router.push('/superposicion');
+  };
+
+  // Función para aplicar filtros
+  const aplicarFiltros = (filtros: FiltrosBusquedaType) => {
+    setActiveFilters(filtros);
+
+    let resultado = [...allData];
+
+    // Filtro por tipo de solicitud
+    if (filtros.filtro && filtros.filtro !== "todos") {
+      const filtroMap: Record<string, string> = {
+        mineros: "petitorios mineros",
+        forestales: "concesiones forestales",
+        protegidas: "áreas protegidas",
+        indigenas: "territorios indígenas"
+      };
+
+      const searchTerm = filtroMap[filtros.filtro];
+      if (searchTerm) {
+        resultado = resultado.filter(item =>
+          item.tipoSolicitud.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+    }
+
+    // Filtro por nombre o número de expediente
+    if (filtros.nombre.trim()) {
+      const searchTerm = filtros.nombre.toLowerCase();
+      resultado = resultado.filter(item =>
+        item.nroExp.toLowerCase().includes(searchTerm) ||
+        item.asunto.toLowerCase().includes(searchTerm) ||
+        item.profesional.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    // Filtro por fecha (simulado - en un caso real tendrías fechas en los datos)
+    if (filtros.fechaDesde || filtros.fechaHasta) {
+      // Aquí podrías implementar la lógica de filtrado por fecha
+      // Por ahora mantenemos todos los datos
+      console.log("Filtros de fecha aplicados:", { fechaDesde: filtros.fechaDesde, fechaHasta: filtros.fechaHasta });
+    }
+
+    setFilteredData(resultado);
+  };
+
+  // Función para limpiar filtros
+  const limpiarFiltros = () => {
+    setActiveFilters({
+      filtro: "",
+      nombre: "",
+    });
+    setFilteredData(allData);
+  };
+
+  // Función para actualizar datos cuando se agrega/edita/elimina
+  const actualizarDatos = (nuevosDatos: SuperposicionData[]) => {
+    setAllData(nuevosDatos);
+    // Reaplicar filtros activos
+    if (activeFilters.filtro || activeFilters.nombre || activeFilters.fechaDesde || activeFilters.fechaHasta) {
+      aplicarFiltros(activeFilters);
+    } else {
+      setFilteredData(nuevosDatos);
+    }
+  };
+
   return (
-    <div className="p-6 space-y-6">
-      <FiltrosBusqueda />
-      <TablaBusquedaResultados />
+    <div className="p-4 space-y-4 max-w-7xl mx-auto">
+      {/* Filtros */}
+      <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+        <h2 className="text-base font-semibold text-gray-900 mb-3 flex items-center">
+          <Search className="w-4 h-4 mr-2 text-green-600" />
+          Filtros de Búsqueda
+        </h2>
+        <FiltrosBusqueda
+          onBuscar={aplicarFiltros}
+          onLimpiar={limpiarFiltros}
+        />
+      </div>
+
+      {/* Resultados */}
+      <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-base font-semibold text-gray-900 flex items-center">
+            <FileText className="w-4 h-4 mr-2 text-green-600" />
+            Lista de Superposiciones
+          </h2>
+          <div className="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded">
+            {filteredData.length} registro{filteredData.length !== 1 ? 's' : ''} encontrado{filteredData.length !== 1 ? 's' : ''}
+          </div>
+        </div>
+
+        <TablaBusquedaResultados
+          data={filteredData}
+          onDataChange={actualizarDatos}
+          onNavegarASuperposicion={handleNavegarASuperposicion}
+        />
+      </div>
     </div>
   );
 }

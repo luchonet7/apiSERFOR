@@ -30,13 +30,9 @@ export function SuperposicionContainer () {
   };
 
   return (
-
     <div className="">
-
       <RegistroForm onNext={handleNextStep} />
-
     </div>
-
   );
 }
 

@@ -1,18 +1,21 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FileText, Filter, MapPin, Upload, Search, Trash2, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { MapaInteractivo } from "./mapa-interactivo";
 import { AmbitoConsulta } from "../types/ambito-consulta";
+import { toast } from "sonner";
 
 interface RegistroFormProps {
   onNext: (ambitos?: any[]) => void;
 }
 
 export function RegistroForm ({ onNext }: RegistroFormProps) {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     numeroExpediente: "",
     asunto: "",
@@ -73,26 +76,42 @@ export function RegistroForm ({ onNext }: RegistroFormProps) {
     setCurrentPage(1); // Resetear a la primera página
   };
 
+  const handleCancelar = () => {
+    // Verificar si hay datos ingresados
+    const hayDatos = formData.numeroExpediente.trim() ||
+      formData.asunto.trim() ||
+      formData.fecha ||
+      ambitos.length > 0;
+
+    if (hayDatos) {
+      if (confirm("¿Está seguro que desea cancelar? Se perderán los datos ingresados.")) {
+        router.push('/busqueda');
+      }
+    } else {
+      router.push('/busqueda');
+    }
+  };
+
   const handleSubmit = async () => {
     // Validar campos obligatorios
     if (!formData.numeroExpediente.trim()) {
-      alert("El número de expediente es obligatorio");
+      toast.error("El número de expediente es obligatorio");
       return;
     }
 
     if (!formData.asunto.trim()) {
-      alert("El asunto es obligatorio");
+      toast.error("El asunto es obligatorio");
       return;
     }
 
     if (!formData.fecha) {
-      alert("La fecha es obligatoria");
+      toast.error("La fecha es obligatoria");
       return;
     }
 
     // Validar que haya al menos un ámbito seleccionado
     if (ambitos.length === 0) {
-      alert("Debe seleccionar al menos un ámbito en el mapa");
+      toast.error("Debe seleccionar al menos un ámbito en el mapa");
       return;
     }
 
@@ -128,16 +147,18 @@ export function RegistroForm ({ onNext }: RegistroFormProps) {
 
       console.log("Respuesta de la API:", result);
 
-      // Si la petición fue exitosa, continuar al siguiente paso
+      // Si la petición fue exitosa, navegar de vuelta a la lista de búsqueda
       if (response.ok) {
-        onNext(ambitos);
+        toast.success("Superposición registrada exitosamente");
+        // Navegar de vuelta a la página de búsqueda
+        router.push('/busqueda');
       } else {
         console.error("Error al guardar el expediente:", result);
-        // Aquí podrías mostrar un mensaje de error al usuario
+        toast.error("Error al guardar el expediente");
       }
     } catch (error) {
       console.error("Error al enviar datos:", error);
-      // Aquí podrías mostrar un mensaje de error al usuario
+      toast.error("Error al enviar datos");
     }
   };
 
@@ -205,8 +226,15 @@ export function RegistroForm ({ onNext }: RegistroFormProps) {
 
 
 
-      {/* Botón siguiente */}
-      <div className="px-6 pb-6 flex justify-end">
+      {/* Botones */}
+      <div className="px-6 pb-6 flex justify-between">
+        <Button
+          onClick={handleCancelar}
+          variant="outline"
+          className="border-gray-300 text-gray-700 hover:bg-gray-50"
+        >
+          Cancelar
+        </Button>
         <Button onClick={handleSubmit} className="bg-green-600 hover:bg-green-700">
           Guardar
         </Button>

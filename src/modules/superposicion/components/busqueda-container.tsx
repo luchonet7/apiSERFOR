@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { Plus, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FiltrosBusqueda } from "./filtros-busqueda";
@@ -27,6 +28,7 @@ interface BusquedaContainerProps {
 }
 
 export function BusquedaContainer ({ onNextStep }: BusquedaContainerProps) {
+    const router = useRouter();
     const [allData, setAllData] = useState<SuperposicionData[]>(initialData);
     const [filteredData, setFilteredData] = useState<SuperposicionData[]>(initialData);
     const [activeFilters, setActiveFilters] = useState<FiltrosBusquedaType>({
@@ -97,6 +99,11 @@ export function BusquedaContainer ({ onNextStep }: BusquedaContainerProps) {
         }
     };
 
+    // Función para navegar a la página de superposición
+    const handleNavegarASuperposicion = () => {
+        router.push('/superposicion');
+    };
+
     return (
         <div className="space-y-6">
             {/* Filtros */}
@@ -108,10 +115,10 @@ export function BusquedaContainer ({ onNextStep }: BusquedaContainerProps) {
                     onBuscar={aplicarFiltros}
                     onLimpiar={limpiarFiltros}
                 />
-            </div>
 
-            {/* Resultados */}
-            <div className="bg-white p-6 rounded-lg border border-gray-200">
+
+                {/* Resultados */}
+
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-lg font-semibold text-gray-900">
                         Resultados de Búsqueda
@@ -125,6 +132,7 @@ export function BusquedaContainer ({ onNextStep }: BusquedaContainerProps) {
                 <TablaBusquedaResultados
                     data={filteredData}
                     onDataChange={actualizarDatos}
+                    onNavegarASuperposicion={handleNavegarASuperposicion}
                 />
             </div>
 
