@@ -1,38 +1,101 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Search, Edit, Trash2 } from "lucide-react";
+import { Search, Edit, Trash2, Plus } from "lucide-react";
 import { IconButton } from "@/components/custom/icon-button";
+import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/custom/data-table";
 import { DataTableColumnHeader } from "@/components/custom/data-table-header-column";
+import { FormularioSuperposicion } from "./formulario-superposicion";
+import { ConfirmacionEliminar } from "./confirmacion-eliminar";
+import { DetalleSuperposicion } from "./detalle-superposicion";
+import { SuperposicionData, SuperposicionFormData } from "../types/superposicion.types";
 
-// Tipo para los datos de la tabla
-interface SuperposicionData {
-  id: string;
-  nroExp: string;
-  asunto: string;
-  tipoSolicitud: string;
-  profesional: string;
+interface TablaBusquedaResultadosProps {
+  data: SuperposicionData[];
+  onDataChange: (data: SuperposicionData[]) => void;
 }
 
-// Datos mock basados en la imagen
-const mockDataBase: SuperposicionData = {
-  id: "1",
-  nroExp: "2025-0016083",
-  asunto: "Atención a consulta formulada sobre 748 petitorios mineros, en el marco de lo regulado en el artículo N° 62 de la Ley N° 29763, Ley Forestal y de Fauna Silvestre.",
-  tipoSolicitud: "Análisis de superposición de petitorios mineros",
-  profesional: "Lenin Ventura"
-};
+export function TablaBusquedaResultados ({ data, onDataChange }: TablaBusquedaResultadosProps) {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editData, setEditData] = useState<SuperposicionData | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deleteItem, setDeleteItem] = useState<SuperposicionData | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [detailData, setDetailData] = useState<SuperposicionData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-// Simular datos para la paginación
-const allData: SuperposicionData[] = Array.from({ length: 13 }, (_, index) => ({
-  ...mockDataBase,
-  id: `${index + 1}`,
-  nroExp: `2025-00160${83 + index}`,
-}));
+  // Función para generar nuevo ID
+  const generateNewId = () => {
+    const maxId = Math.max(...data.map(item => parseInt(item.id)), 0);
+    return (maxId + 1).toString();
+  };
 
-export function TablaBusquedaResultados() {
+  // Función para agregar nuevo registro
+  const handleAdd = (formData: SuperposicionFormData) => {
+    const newItem: SuperposicionData = {
+      ...formData,
+      id: generateNewId()
+    };
+    const newData = [newItem, ...data];
+    onDataChange(newData);
+  };
+
+  // Función para editar registro
+  const handleEdit = (formData: SuperposicionFormData) => {
+    if (editData) {
+      const newData = data.map(item =>
+        item.id === editData.id
+          ? { ...formData, id: editData.id }
+          : item
+      );
+      onDataChange(newData);
+    }
+  };
+
+  // Función para eliminar registro
+  const handleDelete = async () => {
+    if (deleteItem) {
+      setIsLoading(true);
+      // Simular delay de API
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const newData = data.filter(item => item.id !== deleteItem.id);
+      onDataChange(newData);
+      setIsLoading(false);
+      setIsDeleteDialogOpen(false);
+      setDeleteItem(null);
+    }
+  };
+
+  // Función para abrir formulario de edición
+  const openEditForm = (item: SuperposicionData) => {
+    setEditData(item);
+    setIsEditMode(true);
+    setIsFormOpen(true);
+  };
+
+  // Función para abrir formulario de agregar
+  const openAddForm = () => {
+    setEditData(null);
+    setIsEditMode(false);
+    setIsFormOpen(true);
+  };
+
+  // Función para abrir diálogo de eliminación
+  const openDeleteDialog = (item: SuperposicionData) => {
+    setDeleteItem(item);
+    setIsDeleteDialogOpen(true);
+  };
+
+  // Función para abrir detalle
+  const openDetail = (item: SuperposicionData) => {
+    setDetailData(item);
+    setIsDetailOpen(true);
+  };
+
   const columns = useMemo<ColumnDef<SuperposicionData>[]>(
     () => [
       {
@@ -95,7 +158,7 @@ export function TablaBusquedaResultados() {
               size="sm"
               className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-950"
               tooltip="Ver superposición"
-              onClick={() => console.log("Ver:", row.original.nroExp)}
+              onClick={() => openDetail(row.original)}
             >
               <Search className="h-4 w-4" />
             </IconButton>
@@ -105,8 +168,8 @@ export function TablaBusquedaResultados() {
               color="blue"
               className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950"
               tooltip="Editar"
-              onClick={() => console.log("Editar:", row.original.nroExp)}
-            > 
+              onClick={() => openEditForm(row.original)}
+            >
               <Edit className="h-4 w-4" />
             </IconButton>
             <IconButton
@@ -115,7 +178,7 @@ export function TablaBusquedaResultados() {
               color="red"
               className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
               tooltip="Eliminar"
-              onClick={() => console.log("Eliminar:", row.original.nroExp)}
+              onClick={() => openDeleteDialog(row.original)}
             >
               <Trash2 className="h-4 w-4" />
             </IconButton>
@@ -130,12 +193,61 @@ export function TablaBusquedaResultados() {
   );
 
   return (
-    <DataTable
-      columns={columns}
-      data={allData}
-      pagination={true}
-      pageSize={5}
-      pageSizeOptions={[5, 10, 20]}
-    />
+    <div className="space-y-4">
+      {/* Botón Agregar */}
+      <div className="flex justify-end">
+        <Button
+          onClick={openAddForm}
+          className="bg-green-600 hover:bg-green-700 text-white"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Agregar Superposición
+        </Button>
+      </div>
+
+      {/* Tabla */}
+      <DataTable
+        columns={columns}
+        data={data}
+        pagination={true}
+        pageSize={5}
+        pageSizeOptions={[5, 10, 20]}
+      />
+
+      {/* Formulario Modal */}
+      <FormularioSuperposicion
+        isOpen={isFormOpen}
+        onClose={() => {
+          setIsFormOpen(false);
+          setEditData(null);
+          setIsEditMode(false);
+        }}
+        onSubmit={isEditMode ? handleEdit : handleAdd}
+        editData={editData}
+        isEditing={isEditMode}
+      />
+
+      {/* Diálogo de confirmación de eliminación */}
+      <ConfirmacionEliminar
+        isOpen={isDeleteDialogOpen}
+        onClose={() => {
+          setIsDeleteDialogOpen(false);
+          setDeleteItem(null);
+        }}
+        onConfirm={handleDelete}
+        itemName={deleteItem?.nroExp || ""}
+        isLoading={isLoading}
+      />
+
+      {/* Modal de detalle */}
+      <DetalleSuperposicion
+        isOpen={isDetailOpen}
+        onClose={() => {
+          setIsDetailOpen(false);
+          setDetailData(null);
+        }}
+        data={detailData}
+      />
+    </div>
   );
 }

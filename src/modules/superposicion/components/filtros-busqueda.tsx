@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,16 +17,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { FiltrosBusqueda as FiltrosBusquedaType } from "../types/superposicion.types";
 
 // Componente DatePicker personalizado
-function DatePicker({ 
-  date, 
-  onDateChange, 
-  placeholder = "Seleccionar fecha" 
-}: { 
-  date?: Date; 
-  onDateChange: (date: Date | undefined) => void; 
-  placeholder?: string; 
+function DatePicker ({
+  date,
+  onDateChange,
+  placeholder = "Seleccionar fecha"
+}: {
+  date?: Date;
+  onDateChange: (date: Date | undefined) => void;
+  placeholder?: string;
 }) {
   return (
     <Popover>
@@ -54,16 +55,35 @@ function DatePicker({
   );
 }
 
-export function FiltrosBusqueda() {
+interface FiltrosBusquedaProps {
+  onBuscar: (filtros: FiltrosBusquedaType) => void;
+  onLimpiar: () => void;
+}
+
+export function FiltrosBusqueda ({ onBuscar, onLimpiar }: FiltrosBusquedaProps) {
   const [filtro, setFiltro] = useState("");
   const [nombre, setNombre] = useState("");
   const [fechaDesde, setFechaDesde] = useState<Date | undefined>();
   const [fechaHasta, setFechaHasta] = useState<Date | undefined>();
 
   const handleBuscar = () => {
-    // Lógica de búsqueda aquí (por ahora solo presentacional)
-    console.log("Buscando...", { filtro, nombre, fechaDesde, fechaHasta });
+    onBuscar({
+      filtro,
+      nombre,
+      fechaDesde,
+      fechaHasta
+    });
   };
+
+  const handleLimpiar = () => {
+    setFiltro("");
+    setNombre("");
+    setFechaDesde(undefined);
+    setFechaHasta(undefined);
+    onLimpiar();
+  };
+
+  const hasFilters = filtro || nombre || fechaDesde || fechaHasta;
 
   return (
     <div className="space-y-4">
@@ -77,9 +97,11 @@ export function FiltrosBusqueda() {
               <SelectValue placeholder="Seleccione" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="tipo1">Tipo 1</SelectItem>
-              <SelectItem value="tipo2">Tipo 2</SelectItem>
-              <SelectItem value="tipo3">Tipo 3</SelectItem>
+              <SelectItem value="todos">Todos</SelectItem>
+              <SelectItem value="mineros">Petitorios Mineros</SelectItem>
+              <SelectItem value="forestales">Concesiones Forestales</SelectItem>
+              <SelectItem value="protegidas">Áreas Protegidas</SelectItem>
+              <SelectItem value="indigenas">Territorios Indígenas</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -89,7 +111,7 @@ export function FiltrosBusqueda() {
           <Label htmlFor="nombre">Nombre</Label>
           <Input
             id="nombre"
-            placeholder="Ingrese nombre"
+            placeholder="Ingrese nombre o número de expediente"
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
             className="border-lime-700"
@@ -120,12 +142,23 @@ export function FiltrosBusqueda() {
         </div>
       </div>
 
-      {/* Botón de búsqueda */}
-      <div className="flex justify-end">
-        <Button 
+      {/* Botones de acción */}
+      <div className="flex justify-end gap-3">
+        {hasFilters && (
+          <Button
+            variant="outline"
+            onClick={handleLimpiar}
+            className="border-gray-300 text-gray-700 hover:bg-gray-50"
+          >
+            <X className="h-4 w-4 mr-2" />
+            Limpiar Filtros
+          </Button>
+        )}
+        <Button
           onClick={handleBuscar}
           className="bg-green-600 hover:bg-green-700 text-white px-8"
         >
+          <Search className="h-4 w-4 mr-2" />
           Buscar
         </Button>
       </div>

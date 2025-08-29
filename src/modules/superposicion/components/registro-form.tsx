@@ -208,7 +208,7 @@ export function RegistroForm ({ onNext }: RegistroFormProps) {
       {/* Botón siguiente */}
       <div className="px-6 pb-6 flex justify-end">
         <Button onClick={handleSubmit} className="bg-green-600 hover:bg-green-700">
-          Siguiente
+          Guardar
         </Button>
       </div>
 

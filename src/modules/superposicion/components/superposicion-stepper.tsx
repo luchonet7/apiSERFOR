@@ -12,11 +12,16 @@ interface SuperposicionStepperProps {
 const steps = [
   {
     id: 1,
+    title: "Gestión",
+    description: "Buscar y gestionar"
+  },
+  {
+    id: 2,
     title: "Registro",
     description: "Datos y archivo"
   },
   {
-    id: 2,
+    id: 3,
     title: "Análisis",
     description: "Revisión y envío"
   }
@@ -28,7 +33,7 @@ export function SuperposicionStepper ({ currentStep, onBackToFirst }: Superposic
       {/* Título principal */}
       <div className="text-center">
         <h1 className="text-3xl font-bold text-green-700">
-          Registrar análisis de superposición
+          Sistema de Superposición
         </h1>
       </div>
 

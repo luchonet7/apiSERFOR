@@ -4,13 +4,14 @@ import { useState } from "react";
 import { SuperposicionStepper } from "./superposicion-stepper";
 import { RegistroForm } from "./registro-form";
 import { AnalisisView } from "./analisis-view";
+import { BusquedaContainer } from "./busqueda-container";
 
 export function SuperposicionContainer () {
   const [currentStep, setCurrentStep] = useState(1);
   const [ambitos, setAmbitos] = useState<any[]>([]);
 
   const handleNextStep = (ambitosFromStep?: any[]) => {
-    if (currentStep < 2) {
+    if (currentStep < 3) {
       if (ambitosFromStep) {
         setAmbitos(ambitosFromStep);
       }
@@ -29,20 +30,13 @@ export function SuperposicionContainer () {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="">
-        {/* Stepper */}
-        <SuperposicionStepper currentStep={currentStep} onBackToFirst={handleBackToFirst} />
 
-        {/* Content based on current step */}
-        {currentStep === 1 && (
-          <RegistroForm onNext={handleNextStep} />
-        )}
-        {currentStep === 2 && (
-          <AnalisisView onBack={handlePrevStep} ambitos={ambitos} />
-        )}
-      </div>
+    <div className="">
+
+      <RegistroForm onNext={handleNextStep} />
+
     </div>
+
   );
 }
 

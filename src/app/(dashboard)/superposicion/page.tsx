@@ -2,7 +2,7 @@ import { TitlePage } from "@/components/custom/title-page";
 import { Home, FileSearch } from "lucide-react";
 import { SuperposicionContainer } from "@/modules/superposicion/components/superposicion-container";
 
-export default function SuperposicionPage() {
+export default function SuperposicionPage () {
   const breadcrumb = [
     {
       label: "Inicio",
@@ -21,7 +21,7 @@ export default function SuperposicionPage() {
         title="Registrar Análisis de Superposición"
         breadcrumb={breadcrumb}
       />
-      
+
       <div className="bg-white dark:bg-stone-950/50 rounded-lg shadow-sm">
         <SuperposicionContainer />
       </div>

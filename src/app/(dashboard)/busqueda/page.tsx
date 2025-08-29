@@ -1,8 +1,8 @@
 import { TitlePage } from "@/components/custom/title-page";
-import { BusquedaSuperposicionContainer } from "@/modules/superposicion/components/busqueda-superposicion-container";
+import { BusquedaContainer } from "@/modules/superposicion/components/busqueda-container";
 import { Home, Search } from "lucide-react";
 
-export default function BusquedaPage() {
+export default function BusquedaPage () {
   const breadcrumb = [
     {
       label: "Inicio",
@@ -21,9 +21,9 @@ export default function BusquedaPage() {
         title="Búsqueda de Superposición"
         breadcrumb={breadcrumb}
       />
-      
+
       <div className="bg-white dark:bg-stone-950/50 rounded-lg shadow-sm">
-        <BusquedaSuperposicionContainer />
+        <BusquedaContainer />
       </div>
     </div>
   );
