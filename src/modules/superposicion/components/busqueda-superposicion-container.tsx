@@ -103,10 +103,7 @@ export function BusquedaSuperposicionContainer () {
     <div className="p-4 space-y-4 max-w-7xl mx-auto">
       {/* Filtros */}
       <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-        <h2 className="text-base font-semibold text-gray-900 mb-3 flex items-center">
-          <Search className="w-4 h-4 mr-2 text-green-600" />
-          Filtros de Búsqueda
-        </h2>
+
         <FiltrosBusqueda
           onBuscar={aplicarFiltros}
           onLimpiar={limpiarFiltros}

@@ -20,47 +20,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { FiltrosBusqueda as FiltrosBusquedaType } from "../types/superposicion.types";
 
-// Componente DatePicker personalizado mejorado
-function DatePicker ({
-  date,
-  onDateChange,
-  placeholder = "Seleccionar fecha",
-  label
-}: {
-  date?: Date;
-  onDateChange: (date: Date | undefined) => void;
-  placeholder?: string;
-  label: string;
-}) {
-  return (
-    <div className="space-y-1">
-      <Label className="text-xs font-medium text-gray-700">{label}</Label>
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            size="sm"
-            className={cn(
-              "justify-start text-left font-normal border-gray-300 text-xs h-9 w-full px-3",
-              !date && "text-muted-foreground"
-            )}
-          >
-            <CalendarIcon className="mr-2 h-3 w-3 text-gray-600" />
-            {date ? format(date, "dd/MM/yyyy", { locale: es }) : placeholder}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={onDateChange}
-            initialFocus
-          />
-        </PopoverContent>
-      </Popover>
-    </div>
-  );
-}
+
 
 interface FiltrosBusquedaProps {
   onBuscar: (filtros: FiltrosBusquedaType) => void;
@@ -101,17 +61,17 @@ export function FiltrosBusqueda ({ onBuscar, onLimpiar }: FiltrosBusquedaProps) 
         <h3 className="text-lg font-semibold text-gray-900">Filtros de Búsqueda</h3>
       </div >
 
-      <div className="space-y-6">
-        {/* Primera fila: Tipo de solicitud y búsqueda */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="space-y-4">
+        {/* Todos los filtros en una línea */}
+        <div className="flex flex-wrap items-end gap-4">
           {/* Tipo de Solicitud */}
-          <div className="space-y-2">
-            <Label htmlFor="filtro" className="text-sm font-medium text-gray-700">
+          <div className="space-y-1 min-w-[200px]">
+            <Label htmlFor="filtro" className="text-xs font-medium text-gray-700">
               Tipo de Solicitud
             </Label>
             <Select value={filtro} onValueChange={setFiltro}>
-              <SelectTrigger id="filtro" className="w-full border-gray-300 text-sm h-10">
-                <SelectValue placeholder="Seleccione el tipo de solicitud" />
+              <SelectTrigger id="filtro" className="w-full border-gray-300 text-xs h-8">
+                <SelectValue placeholder="Seleccione tipo" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="todos">Todos los tipos</SelectItem>
@@ -124,8 +84,8 @@ export function FiltrosBusqueda ({ onBuscar, onLimpiar }: FiltrosBusquedaProps) 
           </div>
 
           {/* Campo de búsqueda */}
-          <div className="space-y-2">
-            <Label htmlFor="nombre" className="text-sm font-medium text-gray-700">
+          <div className="space-y-1 min-w-[250px]">
+            <Label htmlFor="nombre" className="text-xs font-medium text-gray-700">
               Buscar
             </Label>
             <Input
@@ -133,53 +93,92 @@ export function FiltrosBusqueda ({ onBuscar, onLimpiar }: FiltrosBusquedaProps) 
               placeholder="Nombre, expediente o profesional"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
-              className="border-gray-300 text-sm h-10"
+              className="border-gray-300 text-xs h-8"
             />
           </div>
-        </div>
 
-        {/* Segunda fila: Rango de fechas */}
-        <div className="space-y-2">
-          <Label className="text-sm font-medium text-gray-700">
-            Rango de Fechas
-          </Label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <DatePicker
-              date={fechaDesde}
-              onDateChange={setFechaDesde}
-              placeholder="dd/mm/yyyy"
-              label="Fecha desde"
-            />
-            <DatePicker
-              date={fechaHasta}
-              onDateChange={setFechaHasta}
-              placeholder="dd/mm/yyyy"
-              label="Fecha hasta"
-            />
+          {/* Fecha desde */}
+          <div className="space-y-1 min-w-[140px]">
+            <Label className="text-xs font-medium text-gray-700">
+              Desde
+            </Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "justify-start text-left font-normal border-gray-300 text-xs h-8 w-full px-2",
+                    !fechaDesde && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-1 h-3 w-3 text-gray-600" />
+                  {fechaDesde ? format(fechaDesde, "dd/MM/yyyy", { locale: es }) : "dd/mm/yyyy"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={fechaDesde}
+                  onSelect={setFechaDesde}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
-        </div>
 
-        {/* Botones de acción */}
-        <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-gray-100">
-          {hasFilters && (
+          {/* Fecha hasta */}
+          <div className="space-y-1 min-w-[140px]">
+            <Label className="text-xs font-medium text-gray-700">
+              Hasta
+            </Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "justify-start text-left font-normal border-gray-300 text-xs h-8 w-full px-2",
+                    !fechaHasta && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-1 h-3 w-3 text-gray-600" />
+                  {fechaHasta ? format(fechaHasta, "dd/MM/yyyy", { locale: es }) : "dd/mm/yyyy"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={fechaHasta}
+                  onSelect={setFechaHasta}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          {/* Botones de acción */}
+          <div className="flex gap-2 ml-auto">
+            {hasFilters && (
+              <Button
+                variant="outline"
+                onClick={handleLimpiar}
+                size="sm"
+                className="border-gray-300 text-gray-700 hover:bg-gray-50 text-xs h-8 px-3"
+              >
+                <X className="h-3 w-3 mr-1" />
+                Limpiar
+              </Button>
+            )}
             <Button
-              variant="outline"
-              onClick={handleLimpiar}
+              onClick={handleBuscar}
               size="sm"
-              className="border-gray-300 text-gray-700 hover:bg-gray-50 text-sm h-10 px-6"
+              className="bg-green-600 hover:bg-green-700 text-white text-xs h-8 px-4 shadow-sm"
             >
-              <X className="h-4 w-4 mr-2" />
-              Limpiar Filtros
+              <Search className="h-3 w-3 mr-1" />
+              Buscar
             </Button>
-          )}
-          <Button
-            onClick={handleBuscar}
-            size="sm"
-            className="bg-green-600 hover:bg-green-700 text-white text-sm h-10 px-6 shadow-sm"
-          >
-            <Search className="h-4 w-4 mr-2" />
-            Buscar
-          </Button>
+          </div>
         </div>
       </div>
 

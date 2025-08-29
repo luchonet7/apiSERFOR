@@ -108,15 +108,13 @@ export function BusquedaContainer ({ onNextStep }: BusquedaContainerProps) {
         <div className="space-y-6">
             {/* Filtros */}
             <div className="bg-white p-6 rounded-lg border border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                    Filtros de Búsqueda
-                </h2>
+
                 <FiltrosBusqueda
                     onBuscar={aplicarFiltros}
                     onLimpiar={limpiarFiltros}
                 />
 
-
+                <br />
                 {/* Resultados */}
 
                 <div className="flex items-center justify-between mb-4">
